@@ -1,19 +1,37 @@
 export declare class CrysetNode {
-    private network;
     private port;
     private host;
-    client: any;
     constructor(options?: any);
     static fromObject(data: any): CrysetNode;
     toObject(): {
-        network: String;
         port: Number;
         host: String;
     };
+    _call(path: any, method: any, data?: any): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
     importAddress({ address }: {
         address: string;
-    }): Promise<any>;
-    eventTx(): Promise<void>;
-    eventConfirmation(): Promise<void>;
-    eventDoubleSpend(): Promise<void>;
+    }): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
+    listWallet(): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
+    listTx(): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
+    eventTx(): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
 }

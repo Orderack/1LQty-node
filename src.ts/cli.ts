@@ -7,7 +7,6 @@ export async function loadRpc(options) {
   const rpcOptions = {}
   rpcOptions["host"] = options.host;
   rpcOptions["port"] = options.port;
-  rpcOptions["network"] = options.network;
   const rpc = CrysetNode.fromObject(rpcOptions);
   return rpc;
 }
@@ -15,7 +14,6 @@ export async function loadRpc(options) {
 export async function callAPI(command, data, options = {}) {
   const client = await loadRpc(options);
   const camelCommand = camelCase(command);
-  console.log(`${camelCommand}(${data})`);
   if (!client[camelCommand]) throw Error("command not foud: " + command);
   const result = await client[camelCommand](data);
   console.log(JSON.stringify(result, null, 2));

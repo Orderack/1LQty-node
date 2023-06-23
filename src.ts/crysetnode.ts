@@ -1,32 +1,17 @@
-const { WalletClient } = require('bclient');
+import axios from "axios";
 
 export class CrysetNode {
-  private network: String;
   private port: Number;
   private host: String;
 
-  public client
 
   constructor(options?) {
     try{
-      this.network = options?.network || "main";
-      this.port = options?.port || 8334;
-      this.host = options?.host || "157.90.17.37"
-
-      const clientOptions = {
-        network: this.network,
-        port: this.port,
-        host: this.host,
-      }
-
-      const walletClient = new WalletClient(clientOptions);
-      this.client = walletClient.wallet('cryset');
-      (async () => {
-        await this.client.open();
-        await this.client.join('*');
-      })();
-    } catch (e) {
-      console.log("An error occured: ", e);
+      this.port = options?.port || 3000;
+      this.host = options?.host || "198.199.72.193";
+    } catch (err) {
+      console.log("An error occured: ", err);
+      return err
     }
   }
 
@@ -37,35 +22,65 @@ export class CrysetNode {
 
   toObject() {
     return {
-      network: this.network,
       port: this.port,
       host: this.host
     };
   }
 
+  async _call(path, method, data = null) {
+    try {
+      const response = await axios({
+        url: `http://${this.host}:${this.port}/${path}`,
+        method: method,
+        data,
+        responseType: "json",
+      });
+
+      //console.log(response);
+
+      const newObj = {
+        statusMessage: response?.statusText,
+        statusCode: response?.status,
+        data: response?.data,
+      };
+      return newObj;
+    } catch (err) {
+        const newObj = {
+          statusMessage: err?.response?.statusText,
+          statusCode: err?.response?.status,
+          data: err?.response?.data,
+        };
+        return newObj;
+    }
+  }
+
   async importAddress({address} : {address: string})  {
-    const result = await this.client.importAddress('default', address);
-    return result; 
+    return await this._call('import-address', 'post', address);
+  }
+
+  async listWallet() {
+    return await this._call('list-wallets', 'get');
+  }
+
+  async listTx() {
+    return await this._call('list-tx', 'get')
   }
 
   async eventTx() {
-    this.client.bind('tx', (walletID, details) => {
-      console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
-      console.log('Wallet -- TX Event, TX Details:\n', details);
-    });
+    return await this._call('bind', 'post');
   }
 
-  async eventConfirmation() {
-    this.client.bind('confirmed', (walletID, details) => {
-      console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
-      console.log('Wallet -- TX Event, TX Details:\n', details);
-    });
-  }
+  // async eventConfirmation() {
+  //   this.client.bind('confirmed', (walletID, details) => {
+  //     console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
+  //     console.log('Wallet -- TX Event, TX Details:\n', details);
+  //   });
+  // }
 
-  async eventDoubleSpend() {
-    this.client.bind('conflict', (walletID, details) => {
-      console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
-      console.log('Wallet -- TX Event, TX Details:\n', details);
-    });
-  }
+  // async eventDoubleSpend() {
+  //   this.client.bind('conflict', (walletID, details) => {
+  //     console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
+  //     console.log('Wallet -- TX Event, TX Details:\n', details);
+  //   });
+  // }
 }
