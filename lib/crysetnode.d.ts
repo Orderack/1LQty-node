@@ -34,4 +34,20 @@ export declare class CrysetNode {
         statusCode: any;
         data: any;
     }>;
+    getRawMempool(): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
+    getMempoolInfo(): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
+    getFees(): Promise<{
+        "High-Priority": string;
+        "Medium-Priority": string;
+        "Low-Priority": string;
+    }>;
+    calculateHighPriorityFee(payload: any): Promise<number>;
 }

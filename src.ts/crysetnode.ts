@@ -70,6 +70,37 @@ export class CrysetNode {
     return await this._call('bind', 'post');
   }
 
+  async getRawMempool() {
+    return await this._call('mempool', 'get');
+  }
+
+  async getMempoolInfo() {
+    return await this._call('mempool-info', 'get');
+  }
+
+  async getFees() {
+    const mempool = await this.getRawMempool();
+    const info = await this.getMempoolInfo();
+    const high = await this.calculateHighPriorityFee(mempool.data) * 100000000; //10mins
+    const low = (info.data.mempoolminfee * 2) * 100000000;
+    const medium = (high + low)/ 2;
+
+    const fees = {
+      "High-Priority" : `${high / 100}/vB`,
+      "Medium-Priority": `${medium / 100}/vB`,
+      "Low-Priority": `${low / 100}/vB`
+    }
+
+    return fees;
+  }
+
+  async calculateHighPriorityFee(payload) {
+    const fees = Object.values(payload).map((transaction) => transaction["fee"]);
+    fees.sort((a, b) => a - b);
+    const medianFee = fees[Math.floor(fees.length / 2)];
+    return medianFee * 2;
+  }
+
   // async eventConfirmation() {
   //   this.client.bind('confirmed', (walletID, details) => {
   //     console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
