@@ -1,11 +1,13 @@
 export declare class CrysetNode {
     private port;
     private host;
+    private authorizationKey;
     constructor(options?: any);
     static fromObject(data: any): CrysetNode;
     toObject(): {
         port: Number;
         host: String;
+        auth: any;
     };
     _call(path: any, method: any, data?: any): Promise<{
         statusMessage: any;
@@ -13,7 +15,7 @@ export declare class CrysetNode {
         data: any;
     }>;
     importAddress({ address }: {
-        address: string;
+        address: String;
     }): Promise<{
         statusMessage: any;
         statusCode: any;
@@ -29,11 +31,6 @@ export declare class CrysetNode {
         statusCode: any;
         data: any;
     }>;
-    eventTx(): Promise<{
-        statusMessage: any;
-        statusCode: any;
-        data: any;
-    }>;
     getRawMempool(): Promise<{
         statusMessage: any;
         statusCode: any;
@@ -45,9 +42,15 @@ export declare class CrysetNode {
         data: any;
     }>;
     getFees(): Promise<{
-        "High-Priority": string;
-        "Medium-Priority": string;
-        "Low-Priority": string;
+        statusMessage: any;
+        statusCode: any;
+        data: any;
     }>;
-    calculateHighPriorityFee(payload: any): Promise<number>;
+    importMultiAddress({ addresses }: {
+        addresses: String[];
+    }): Promise<{
+        statusMessage: string;
+        statusCode: any;
+        data: any;
+    }>;
 }

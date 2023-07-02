@@ -3,15 +3,15 @@ import axios from "axios";
 export class CrysetNode {
   private port: Number;
   private host: String;
-
+  private authorizationKey;
 
   constructor(options?) {
-    try{
-      this.port = options?.port || 3000;
-      this.host = options?.host || "198.199.72.193";
+    try {
+      this.port = options.port;
+      this.host = options.host;
+      this.authorizationKey = options.auth;
     } catch (err) {
-      console.log("An error occured: ", err);
-      return err
+      return err;
     }
   }
 
@@ -23,20 +23,24 @@ export class CrysetNode {
   toObject() {
     return {
       port: this.port,
-      host: this.host
+      host: this.host,
+      auth: this.authorizationKey,
     };
   }
 
   async _call(path, method, data = null) {
+    const headers = {
+      Authorization: this.authorizationKey,
+    };
+
     try {
       const response = await axios({
         url: `http://${this.host}:${this.port}/${path}`,
         method: method,
         data,
         responseType: "json",
+        headers: headers,
       });
-
-      //console.log(response);
 
       const newObj = {
         statusMessage: response?.statusText,
@@ -45,73 +49,58 @@ export class CrysetNode {
       };
       return newObj;
     } catch (err) {
-        const newObj = {
-          statusMessage: err?.response?.statusText,
-          statusCode: err?.response?.status,
-          data: err?.response?.data,
-        };
-        return newObj;
+      const newObj = {
+        statusMessage: err?.response?.statusText,
+        statusCode: err?.response?.status,
+        data: err?.response?.data,
+      };
+      return newObj;
     }
   }
 
-  async importAddress({address} : {address: string})  {
-    return await this._call('import-address', 'post', address);
+  async importAddress({ address }: { address: String }) {
+    return await this._call("import-address", "post", { address: address });
   }
 
   async listWallet() {
-    return await this._call('list-wallets', 'get');
+    return await this._call("list-wallets", "get");
   }
 
   async listTx() {
-    return await this._call('list-tx', 'get')
-  }
-
-  async eventTx() {
-    return await this._call('bind', 'post');
+    return await this._call("list-tx", "get");
   }
 
   async getRawMempool() {
-    return await this._call('mempool', 'get');
+    return await this._call("mempool", "get");
   }
 
   async getMempoolInfo() {
-    return await this._call('mempool-info', 'get');
+    return await this._call("mempool-info", "get");
   }
 
   async getFees() {
-    const mempool = await this.getRawMempool();
-    const info = await this.getMempoolInfo();
-    const high = await this.calculateHighPriorityFee(mempool.data) * 100000000; //10mins
-    const low = (info.data.mempoolminfee * 2) * 100000000;
-    const medium = (high + low)/ 2;
+    return await this._call("get-fees", "get");
+  }
 
-    const fees = {
-      "High-Priority" : `${high / 100}/vB`,
-      "Medium-Priority": `${medium / 100}/vB`,
-      "Low-Priority": `${low / 100}/vB`
+  async importMultiAddress({ addresses }: { addresses: String[] }) {
+    for (let i = 0; i < addresses.length; i++) {
+      const response = await this.importAddress({ address: addresses[i] });
+      if (response.statusCode != 200) {
+        const eMessage = "An error occured when importing " + addresses[i];
+        return {
+          statusMessage: eMessage,
+          statusCode: response.statusCode,
+          data: response.data,
+        };
+      }
     }
-
-    return fees;
+    const successPayload = {
+      statusMessage: "OK",
+      statusCode: 200,
+      data: {
+        success: true,
+      },
+    };
+    return successPayload;
   }
-
-  async calculateHighPriorityFee(payload) {
-    const fees = Object.values(payload).map((transaction) => transaction["fee"]);
-    fees.sort((a, b) => a - b);
-    const medianFee = fees[Math.floor(fees.length / 2)];
-    return medianFee * 2;
-  }
-
-  // async eventConfirmation() {
-  //   this.client.bind('confirmed', (walletID, details) => {
-  //     console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
-  //     console.log('Wallet -- TX Event, TX Details:\n', details);
-  //   });
-  // }
-
-  // async eventDoubleSpend() {
-  //   this.client.bind('conflict', (walletID, details) => {
-  //     console.log('Wallet -- TX Event, Wallet ID:\n', walletID);
-  //     console.log('Wallet -- TX Event, TX Details:\n', details);
-  //   });
-  // }
 }
