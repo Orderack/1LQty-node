@@ -46,6 +46,14 @@ export declare class CrysetNode {
         statusCode: any;
         data: any;
     }>;
+    subscribe({ webhookUrl, rbf }: {
+        webhookUrl: string;
+        rbf?: boolean;
+    }): Promise<{
+        statusMessage: any;
+        statusCode: any;
+        data: any;
+    }>;
     importMultiAddress({ addresses }: {
         addresses: String[];
     }): Promise<{
@@ -53,4 +61,10 @@ export declare class CrysetNode {
         statusCode: any;
         data: any;
     }>;
+    importSubscribe({ addresses, webhookUrl, rbf }: {
+        addresses: String[];
+        webhookUrl: string;
+        rbf?: boolean;
+    }): Promise<void>;
+    testImpSub(): Promise<void>;
 }

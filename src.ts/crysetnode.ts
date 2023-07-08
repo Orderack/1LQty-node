@@ -82,6 +82,10 @@ export class CrysetNode {
     return await this._call("get-fees", "get");
   }
 
+  async subscribe({webhookUrl, rbf = false}: {webhookUrl: string, rbf?: boolean }) {
+    return await this._call("subscribe-webhook", "post", { webhookUrl: webhookUrl, rbf: rbf });
+  }
+
   async importMultiAddress({ addresses }: { addresses: String[] }) {
     for (let i = 0; i < addresses.length; i++) {
       const response = await this.importAddress({ address: addresses[i] });
@@ -102,5 +106,10 @@ export class CrysetNode {
       },
     };
     return successPayload;
+  }
+
+  async importSubscribe ({addresses, webhookUrl, rbf}: { addresses: String[], webhookUrl: string, rbf?: boolean }) {
+      await this.importMultiAddress({addresses});
+      await this.subscribe({webhookUrl, rbf});
   }
 }

@@ -35,7 +35,7 @@ CrysetNode {
 }
 ```
 
-Call methods on the oylib object as commands with **snake-case**. If the method requires a parameter, pass it along with the config. e.g --address below:
+Call methods on the crysetNode object as commands with **snake-case**. If the method requires a parameter, pass it along with the config. e.g --address below:
 
 ```
 crysetNode import-address --address "33...H" --host "198.x.x.103" --port 3000 --auth "authkey"
@@ -122,3 +122,42 @@ CrysetNode {
 
 ```
 The method iterates through the array and stops immediately it faces an error, this error only refers to the address in the statusMessage
+
+
+To import multiple wallets and subscribe to a webhook URl example:
+
+
+```
+const addresses = ["1Kr6...1g", "3EMq...zG", "39mY...JE"];
+const webhookUrl = "http:// https://sandbox-api.oneliquidity.technology/trading/v1/webhook/node/btc/notification"
+const rbf = true //Set this to true to get doublespending information. Default value is false
+
+await client.importSubscribe({addresses, webhookUrl, rbf});
+
+```
+
+When there's a new transaction notification, the webhook should return a payload similar to:
+
+```
+{
+  to_address: '1Kr6...1g',
+  txid: '08f....27c',
+  amount_btc: 0.00001,
+  block_height: null,
+  currency: 'BTC',
+  confirm_blocks: 0,
+  time: 1688814734,
+  date: '2023-07-08T11:12:14Z',
+  fees: 852,
+  feerate: '6.042/vB',
+  mempool_fee_rates: {
+    'High-Priority': '20.52/vB',
+    'Medium-Priority': '17.26/vB',
+    'Low-Priority': '14/vB'
+  },
+  from_address: [ 'bc1q....ysj' ],
+  replace_by_fee: false,
+  Double_spend_risk: 'None'
+}
+
+```
