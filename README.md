@@ -21,31 +21,31 @@ Each time this library is edited, it needs to be rebuilt with ```yarn build```
 Run commands, pass in parameters
 
 ```
-crysetNode --host "198.x.x.103"  --port 3000 --auth "authkey" 
+nodeclient --host "198.x.x.103"  --port 3000 --auth "authkey" 
 
 ```
 
 returns 
 
 ```
-CrysetNode {
+NodeClient {
   port: 3000,
   host: "198.x.x.103" ,
   authorizationKey: 'authkey'
 }
 ```
 
-Call methods on the crysetNode object as commands with **snake-case**. If the method requires a parameter, pass it along with the config. e.g --address below:
+Call methods on the nodeclient object as commands with **snake-case**. If the method requires a parameter, pass it along with the config. e.g --address below:
 
 ```
-crysetNode import-address --address "33...H" --host "198.x.x.103" --port 3000 --auth "authkey"
+nodeclient import-address --address "33...H" --host "198.x.x.103" --port 3000 --auth "authkey"
 
 ```
 
 returns
 
 ```
-CrysetNode {
+NodeClient {
   port: 3000,
   host: '198.x.x.103',
   authorizationKey: 'authkey'
@@ -63,16 +63,16 @@ CrysetNode {
 Can also import as node module. In your project directory run: 
 
 ```
-yarn add https://github.com/Orderack/cryset-node
+yarn add https://github.com/Orderack/1LQty-node
 
 ```
 
 To call methods (for example importAddress):
 
 ```
-import { CrysetNode } from "crysetnode";
+import { NodeClient } from "nodeclient";
 
-const client = new CrysetNode({
+const client = new NodeClient({
   port: 3000,
   host: '198.x.x.103',
   authorizationKey: 'authkey'
@@ -93,7 +93,7 @@ await client.importMultiAddress({addresses: addresses})
 if successful should return something similar to:
 
 ```
-CrysetNode {
+NodeClient {
   port: 3000,
   host: '198.x.x.103',,
   authorizationKey: 'authkey'
@@ -106,7 +106,7 @@ CrysetNode {
 If an error occurs while importing any of the wallets, it will return an error similar to 
 
 ```
-CrysetNode {
+NodeClient {
   port: 3000,
   host: '198.x.x.103',,
   authorizationKey: 'authkey'

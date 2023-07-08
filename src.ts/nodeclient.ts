@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export class CrysetNode {
+export class NodeClient {
   private port: Number;
   private host: String;
   private authorizationKey;

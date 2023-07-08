@@ -1,15 +1,15 @@
 {
-  "name": "crysetnode",
+  "name": "1LQty-node",
   "version": "1.0.0",
   "description": "undefined",
   "main": "lib/index.js",
-  "repository": "https://github.com/Orderack/cryset-node",
+  "repository": "https://github.com/Orderack/1LQty-node",
   "scripts": {
     "build": "tsc",
     "prettier": "prettier --write ./src.ts/**/*.ts"
   },
   "bin": {
-    "crysetNode": "./bin/cli.js"
+    "nodeclient": "./bin/cli.js"
   },
   "author": "sprimage",
   "license": "MIT",

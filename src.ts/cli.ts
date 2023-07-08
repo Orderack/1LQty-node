@@ -1,13 +1,13 @@
 import yargs from "yargs";
 import { camelCase } from "change-case";
-import { CrysetNode } from "./crysetnode";
+import { NodeClient } from "./nodeclient";
 
 export async function loadRpc(options) {
   const rpcOptions = {};
   rpcOptions["host"] = options.host;
   rpcOptions["port"] = options.port;
   rpcOptions["auth"] = options.auth;
-  const rpc = CrysetNode.fromObject(rpcOptions);
+  const rpc = NodeClient.fromObject(rpcOptions);
   console.log(rpc);
   return rpc;
 }
