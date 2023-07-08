@@ -21,7 +21,7 @@ Each time this library is edited, it needs to be rebuilt with ```yarn build```
 Run commands, pass in parameters
 
 ```
-nodeclient --host "198.x.x.103"  --port 3000 --auth "authkey" 
+nodeclient load --host "198.x.x.103"  --port 3000 --auth "authkey"    
 
 ```
 
